@@ -1,7 +1,6 @@
 Attribute VB_Name = "Módulo1"
 
 Sub clean()
-Attribute clean.VB_ProcData.VB_Invoke_Func = "X\n14"
 '
 ' clean file
 '
@@ -186,12 +185,13 @@ cell = 13
 h = 1
 
 'Ajusta as vírgulas nos comprimentos e pesos
-For i = 0 To r
-    perfil.Cells(cell, 11).NumberFormat = "0.0"
-    perfil.Cells(cell, 6).Value = Round(perfil.Cells(cell, 6).Value, 0)
-    cell = cell + 1
-Next
-
+If perfil.Range("B13").Value <> Empity Then
+    For i = 0 To r
+        perfil.Cells(cell, 11).NumberFormat = "0.0"
+        perfil.Cells(cell, 6).Value = Round(perfil.Cells(cell, 6).Value, 0)
+        cell = cell + 1
+    Next
+End If
 cell = 13
 h = 1
 'Insere todas as chapas na aba da CHAPA
@@ -220,42 +220,40 @@ For i = 0 To r
 Next
 
 
-Worksheets(1).Activate
-
-r = perfil.Range("B13", Range("B13").End(xlDown)).Rows.Count
-
-'Gera a simbologia da peça
-'peca = Cells(
-'resultado_procv = Application.VLookup(
-
-'Gera o comprimento total da peça
-cel = 13
-For i = 0 To r
-    perfil.Cells(cel, 7).Value = perfil.Cells(cel, 6).Value * perfil.Cells(cel, 3).Value
-    cel = cel + 1
-Next
-perfil.Range("G13").End(xlDown).ClearContents
-
-'Numera os itens da aba PERFIL
-cel = 13
-j = 1
-For i = 0 To r
-    perfil.Cells(cel, 1).Value = j
-    cel = cel + 1
-    j = j + 1
-Next
-perfil.Range("A13").End(xlDown).ClearContents
+perfil.Activate
+If perfil.Range("B13").Value <> Empity Then
+    r = perfil.Range("B13", Range("B13").End(xlDown)).Rows.Count
+    'Gera o comprimento total da peça
+    cel = 13
+    For i = 0 To r
+        perfil.Cells(cel, 7).Value = perfil.Cells(cel, 6).Value * perfil.Cells(cel, 3).Value
+        cel = cel + 1
+    Next
+    perfil.Range("G13").End(xlDown).ClearContents
+    
+    'Numera os itens da aba PERFIL
+    cel = 13
+    j = 1
+    For i = 0 To r
+        perfil.Cells(cel, 1).Value = j
+        cel = cel + 1
+        j = j + 1
+    Next
+    perfil.Range("A13").End(xlDown).ClearContents
+End If
 
 'Numera os itens da Aba CHAPA
-Worksheets(2).Activate
-r2 = chapa.Range("B13", Range("B13").End(xlDown)).Rows.Count
-cel = 13
-j = 1
-For i = 0 To r2
-    chapa.Cells(cel, 1).Value = j
-    cel = cel + 1
-    j = j + 1
-Next
+chapa.Activate
+If chapa.Range("B13").Value <> Empity Then
+    r2 = chapa.Range("B13", Range("B13").End(xlDown)).Rows.Count
+    cel = 13
+    j = 1
+    For i = 0 To r2
+        chapa.Cells(cel, 1).Value = j
+        cel = cel + 1
+        j = j + 1
+    Next
+End If
 chapa.Range("A13").End(xlDown).ClearContents
  
 wb.Sheets("RESUMO_PERFIS").PivotTables("Tabela dinâmica16").PivotCache.Refresh
@@ -264,59 +262,72 @@ wb.Sheets("PRANCHA").PivotTables("Tabela dinâmica1").PivotCache.Refresh
 
 'Marca as peças por família de bitola
 chapa.Activate
-r = chapa.Range("B13", Range("B13").End(xlDown)).Rows.Count
-r = r - 2
-cel = 14
-For i = 0 To r
-    If chapa.Cells(cel, 5).Value <> chapa.Cells(cel - 1, 5).Value Then
-        If chapa.Cells(cel - 1, 5).Interior.Color <> RGB(170, 170, 170) Then
-            chapa.Cells(cel, 1).EntireRow.Interior.Color = RGB(170, 170, 170)
+If chapa.Range("B13").Value <> Empity Then
+    r = chapa.Range("B13", Range("B13").End(xlDown)).Rows.Count
+    r = r - 2
+    cel = 14
+    For i = 0 To r
+        If chapa.Cells(cel, 5).Value <> chapa.Cells(cel - 1, 5).Value Then
+            If chapa.Cells(cel - 1, 5).Interior.Color <> RGB(170, 170, 170) Then
+                chapa.Cells(cel, 1).EntireRow.Interior.Color = RGB(170, 170, 170)
+            End If
+        Else
+            If chapa.Cells(cel - 1, 5).Interior.Color = RGB(170, 170, 170) Then
+                chapa.Cells(cel, 1).EntireRow.Interior.Color = RGB(170, 170, 170)
+            End If
         End If
-    Else
-        If chapa.Cells(cel - 1, 5).Interior.Color = RGB(170, 170, 170) Then
-            chapa.Cells(cel, 1).EntireRow.Interior.Color = RGB(170, 170, 170)
-        End If
-    End If
-cel = cel + 1
-Next
+    cel = cel + 1
+    Next
+End If
 
 'Marca as peças por família de bitola
 perfil.Activate
-r = perfil.Range("B13", Range("B13").End(xlDown)).Rows.Count
-r = r - 2
-cel = 14
-For i = 0 To r
-    If perfil.Cells(cel, 5).Value <> perfil.Cells(cel - 1, 5).Value Then
-        If perfil.Cells(cel - 1, 5).Interior.Color <> RGB(170, 170, 170) Then
-            perfil.Cells(cel, 1).EntireRow.Interior.Color = RGB(170, 170, 170)
+If perfil.Range("B13").Value <> Empity Then
+    r = perfil.Range("B13", Range("B13").End(xlDown)).Rows.Count
+    r = r - 2
+    cel = 14
+    For i = 0 To r
+        If perfil.Cells(cel, 5).Value <> perfil.Cells(cel - 1, 5).Value Then
+            If perfil.Cells(cel - 1, 5).Interior.Color <> RGB(170, 170, 170) Then
+                perfil.Cells(cel, 1).EntireRow.Interior.Color = RGB(170, 170, 170)
+            End If
+        Else
+            If perfil.Cells(cel - 1, 5).Interior.Color = RGB(170, 170, 170) Then
+                perfil.Cells(cel, 1).EntireRow.Interior.Color = RGB(170, 170, 170)
+            End If
         End If
-    Else
-        If perfil.Cells(cel - 1, 5).Interior.Color = RGB(170, 170, 170) Then
-            perfil.Cells(cel, 1).EntireRow.Interior.Color = RGB(170, 170, 170)
-        End If
-    End If
-cel = cel + 1
-Next
+    cel = cel + 1
+    Next
+End If
 
 'Ajusta as linhas
 perfil.Activate
-perfil.Range("A13:S13", Range("A13:S13").End(xlDown)).Select
-Selection.Font.Name = "Arial"
-Selection.Font.Size = 14
-Selection.RowHeight = 23.25
-Selection.Borders.LineStyle = xlContinuous
-Selection.HorizontalAlignment = xlCenter
-perfil.Range("F13").End(xlDown).ClearContents
+If perfil.Range("B13").Value <> Empity Then
+    perfil.Range("A13:S13", Range("A13:S13").End(xlDown)).Select
+    Selection.Font.Name = "Arial"
+    Selection.Font.Size = 14
+    Selection.RowHeight = 23.25
+    Selection.Borders.LineStyle = xlContinuous
+    Selection.HorizontalAlignment = xlCenter
+    perfil.Range("F13").End(xlDown).ClearContents
+End If
 
 chapa.Activate
-chapa.Range("A13:S13", Range("A13:S13").End(xlDown)).Select
-Selection.Font.Name = "Arial"
-Selection.Font.Size = 14
-Selection.RowHeight = 23.25
-Selection.Borders.LineStyle = xlContinuous
-Selection.HorizontalAlignment = xlCenter
+If chapa.Range("B13").Value <> Empity Then
+    chapa.Range("A13:S13", Range("A13:S13").End(xlDown)).Select
+    Selection.Font.Name = "Arial"
+    Selection.Font.Size = 14
+    Selection.RowHeight = 23.25
+    Selection.Borders.LineStyle = xlContinuous
+    Selection.HorizontalAlignment = xlCenter
+    chapa.Range("A13").Select
+End If
 
 perfil.Activate
+perfil.Range("K5:N5").Value = Now()
+perfil.Range("K7").Value = "A"
 
 End Sub
+
+
 
