@@ -12,6 +12,12 @@ Set wb = ThisWorkbook
 Set perfil = wb.Worksheets(1)
 Set chapa = wb.Worksheets(2)
 
+If perfil.Range("B13").Value = Empity And chapa.Range("B13").Value = Empity Then
+    MsgBox "Primeiro deve inserir os dados na tabela", , "ERROR"
+    Exit Sub
+End If
+
+
 perfil.Activate
 If perfil.Range("B13").Value <> Empity Then
     r = perfil.Range("B13", Range("B13").End(xlDown)).Rows.Count
@@ -42,4 +48,3 @@ perfil.Active
 
 
 End Sub
-
