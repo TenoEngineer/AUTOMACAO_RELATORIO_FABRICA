@@ -37,30 +37,35 @@ Set perfil = wb.Worksheets(1)
 Set chapa = wb.Worksheets(2)
 
 ' ----------------  LIMPEZA DA PLANILHA CASO TENHA SIDO UTILIZADA    ----------------------
-wb.Sheets("PRANCHA").Activate
-If wb.Sheets("PRANCHA").Range("A2") <> Empity Then
-wb.Sheets("PRANCHA").Range("A2", Range("A2").End(xlDown)).ClearContents
+Dim answer As Integer
+ 
+answer = MsgBox("Deseja limpar os dados da planilha?", vbQuestion + vbYesNo + vbDefaultButton2, "AVISO")
+If answer = vbYes Then
+    wb.Sheets("PRANCHA").Activate
+    If wb.Sheets("PRANCHA").Range("A2") <> Empity Then
+    wb.Sheets("PRANCHA").Range("A2", Range("A2").End(xlDown)).ClearContents
+    End If
+    
+    chapa.Activate
+    If chapa.Range("A13") <> Empity Then
+    chapa.Range("A13:S13", Range("A13:S13").End(xlDown)).Select
+    Selection.Borders.LineStyle = xlNone
+    Selection.ClearContents
+    chapa.Cells.Interior.ColorIndex = 0
+    End If
+    
+    perfil.Activate
+    If perfil.Range("A13") <> Empity Then
+    perfil.Range("A13:S13", Range("A13:S13").End(xlDown)).Select
+    Selection.Borders.LineStyle = xlNone
+    Selection.ClearContents
+    perfil.Cells.Interior.ColorIndex = 0
+    perfil.Range("K5:N5").ClearContents
+    perfil.Range("K7").ClearContents
+    perfil.Range("L7").ClearContents
+    End If
+Else: Exit Sub
 End If
-
-chapa.Activate
-If chapa.Range("A13") <> Empity Then
-chapa.Range("A13:S13", Range("A13:S13").End(xlDown)).Select
-Selection.Borders.LineStyle = xlNone
-Selection.ClearContents
-chapa.Cells.Interior.ColorIndex = 0
-End If
-
-perfil.Activate
-If perfil.Range("A13") <> Empity Then
-perfil.Range("A13:S13", Range("A13:S13").End(xlDown)).Select
-Selection.Borders.LineStyle = xlNone
-Selection.ClearContents
-perfil.Cells.Interior.ColorIndex = 0
-perfil.Range("K5:N5").ClearContents
-perfil.Range("K7").ClearContents
-perfil.Range("L7").ClearContents
-End If
-
   
 ' ----------------  SELEÇÃO DO ARQUIVO PARA IMPORTAÇÃO DOS DADOS    ----------------------
 importFileName = Application.GetOpenFilename(FileFilter:="Arquivo do Excel (*.xls; *.xlsx; *.R35), *.xls;*.xlsx; *.R35", Title:="Escolha um arquivo do Excel")
@@ -81,6 +86,17 @@ End If
 ' ------------------  TRANSFORMANDO EXTENSÃO DE R35 PARA XLS    ----------------------
 'SELECIONA O CAMINHO DO ARQUIVO
 parentName = CreateObject("scripting.filesystemobject").GetParentFolderName(importFileName)
+pathFile = Split(importFileName, ".")
+
+Dim MyValue As Integer
+MyValue = Int((100 * Rnd))
+
+If Not Dir(pathFile(0) & "." & pathFile(1) & ".xls", vbDirectory) = vbNullString And Dir(importFileName, vbDirectory) = vbNullString Then
+    Dim change, file As String
+    file = pathFile(0) & "." & pathFile(1) & ".xls"
+    change = pathFile(0) & "." & pathFile(1) & "_" & MyValue & ".xls"
+    Name file As change
+End If
 
 'FAZ A TRANSFORMAÇÃO DA EXTENSÃO
 If importFileName Like "*.R35" Then
@@ -88,15 +104,12 @@ If importFileName Like "*.R35" Then
        .currentdirectory = parentName
        .Run "%comspec% /c ren *.R35 *.xls", 0, True
     End With
-    pathFile = Split(importFileName, ".")
-    Dim MyValue As Integer
-    MyValue = Int((1000 * Rnd) + 1)
-    importFileName = pathFile(0) & "." & pathFile(1) & ".xls"
-    pathFile = pathFile(0) & "." & pathFile(1) & "_" & MyValue & ".xls"
-    Name importFileName As pathFile
+    pathFile = pathFile(0) & "." & pathFile(1) & ".xls"
 Else
     pathFile = importFileName
 End If
+
+
 Application.ScreenUpdating = False
 
 'APÓS SELECIONAR O ARQUIVO
@@ -119,12 +132,12 @@ With ActiveWorkbook.Worksheets(1).Sort
 End With
 
 ' ------------------  SELECIONA OS DADOS QUE DEVEM SER IMPORTADOS   ------------------
-Set importPosition = importperfileet.Range("D2", importperfileet.Range("D2").End(xlDown).Offset(-1, 0))
+Set importPosition = importperfileet.Range("D2", importperfileet.Range("D2").End(xlDown).Offset(-1))
 Set importQuant = importperfileet.Range("I2", importperfileet.Range("I2").End(xlDown))
 Set importDim = importperfileet.Range("E2", importperfileet.Range("E2").End(xlDown))
 Set importComp = importperfileet.Range("K2", importperfileet.Range("K2").End(xlDown))
 Set importName = importperfileet.Range("B2", importperfileet.Range("B2").End(xlDown))
-Set importKg = importperfileet.Range("S2", importperfileet.Range("S2").End(xlDown).Offset(-1, 0))
+Set importKg = importperfileet.Range("S2", importperfileet.Range("S2").End(xlDown).Offset(-1))
 Set importArea = importperfileet.Range("U2").End(xlDown)
 
 'MENSAGEM DE ERRO CASO ABRA PLANILHA ERRADA
